@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+    <head>
+		<meta charset="UTF-8">
+        <title>RazorBlue - Anagram Check</title>
+		<script>
+			function checkAnagram() {
+				let text1 = document.getElementById('string1').value.trim();
+				let text2 = document.getElementById('string2').value.trim();
+				let validation1 = document.getElementById('validation1');
+				let validation2 = document.getElementById('validation2');
+				let messageDiv = document.getElementById('message');
+				let valid = true;
+				let s1 = '';
+				let s2 = '';
+				
+				validation1.innerText = '';
+				validation2.innerText = '';
+				messageDiv.innerText = '';
+				messageDiv.style.display = 'none';
+				
+				if (text1 === '' || text1.length < 2) {
+					validation1.innerText = 'First text must contain least 2 characters!';
+					valid = false;
+				}
+					
+				if (text2 === '' || text2.length < 2) {
+					validation2.innerText = 'Second text must contain least 2 characters!';
+					valid = false;
+				}
+				if (text1.len != text2.len)
+					return false;
+					
+				if (valid) {
+					s1 = text1.toLocaleLowerCase().split('').sort().join('');
+					s2 = text2.toLocaleLowerCase().split('').sort().join('');
+					//alert(s1);
+					//alert(s2);
+					let result = s1.localeCompare(s2);
+					if(result === 0) {
+						messageDiv.innerText = 'The entered strings are anagram.';
+						messageDiv.style.color = 'green';
+						messageDiv.style.display = 'block';
+					} else {
+						messageDiv.innerText = 'The entered texts are not anagram.';
+						messageDiv.style.color = 'red';
+						messageDiv.style.display = 'block';
+					}
+				} else {
+					messageDiv.innerText = 'Error: Please fix the above issues.';
+					messageDiv.style.color = 'red';
+					messageDiv.style.display = 'block';
+				}
+			
+			}
+		</script>
+    </head>
+	<body>
+		<div style="position: absolute; top: 0; left: 50%; transform: translateX(-50%);">
+			<div>
+				<h1 style="color: green;">
+					RazorBlue
+				</h1>
+			</div>
+			<div>
+				<h3>
+					Anagram Check
+				</h3>
+			</div>
+			<div>
+				<div id="message" style="margin-top: 25px; font-size: 18px; display: none;"></div>
+				<form onsubmit="return validateForm()">
+				<div style="padding-bottom: 20px;">
+				  <textarea id="string1" placeholder="Enter first text..." 
+					style="width: 400px; height: 100px; font-size: 16px; padding: 10px;"></textarea><br>
+				  <span id="validation1" style="color: red; font-size: 14px;"></span>
+				</div>
+				<div style="padding-bottom: 20px;">
+				  <textarea id="string2" placeholder="Enter second text..." 
+					style="width: 400px; height: 100px; font-size: 16px; padding: 10px;"></textarea><br>
+				  <span id="validation2" style="color: red; font-size: 14px;"></span>
+				</div>		
+				<button type="button" style="padding: 10px 20px; font-size: 16px;" onclick="return checkAnagram();">Check</button>
+			  </form>
+			</div>
+		</div>
+	</body>
+</html>
