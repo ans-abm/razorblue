@@ -6,8 +6,31 @@
 	}
 
 	if (($handle = fopen($inputFile, 'r')) !== false) { // Opening file in read mode
+		
 		$header = fgetcsv($handle);
+		
+		// Importing the CSV
+		$paramImport = importRegistrationCsv($header, $handle);
+		$validFuelTypes = $paramImport['validFuelType'];
+		$invalidCount = $paramImport['invalidCount'];
+		
+		fclose($handle); 
 
+		// Displaying list of vehicles with valid registration
+		displayValidRegistrationList($header, $validFuelTypes);
+
+		// Exporting CSVs based on fuel type
+		exportFuelTypeCsv($validFuelTypes, $header);
+
+		// Display the number of invalid registrations
+		echo "<p style='color: red'><strong>Number of vehicles with INVALID registration number: $invalidCount</strong></p>";
+
+	} else {
+		echo "Failed to open the file.";
+	}
+	
+	// Function to import registration CSV
+	function importRegistrationCsv($header, $handle) {
 		if (!is_array($header)) {
 			die("Invalid or empty header columns.");
 		}
@@ -21,6 +44,7 @@
 
 		$regPattern = '/^[A-Z]{2}[0-9]{2} [A-Z]{3}$/i'; // Valid registration pattern
 		$readRegs = [];
+		$paramImport = [];
 		$validFuelTypes = [];
 		$invalidCount = 0;
 
@@ -48,10 +72,13 @@
 				$invalidCount++;
 			}
 		}
-
-		fclose($handle);
-
-		// Displaying list of vehicles with valid registration
+		$paramImport['validFuelType'] = $validFuelTypes;
+		$paramImport['invalidCount'] = $invalidCount;
+		return $paramImport;
+	}
+	
+	// Function to display list of vehicles with valid registration
+	function displayValidRegistrationList($header, $validFuelTypes) {
 		echo "<h3 style='color: green'>List of vehicles with Valid Registration</h3>";
 		echo "<table width='80%' border='1' itempadding='3'><tr>";
 		foreach ($header as $col) {
@@ -69,8 +96,9 @@
 			}
 		}
 		echo "</table>";
-
-		// Exporting CSVs based on fuel type
+	}
+	// Function to export CSVs based on fuel type
+	function exportFuelTypeCsv($validFuelTypes, $header) {
 		foreach ($validFuelTypes as $fuelType => $rows) {
 			$sanitizedFuel = preg_replace('/[^a-zA-Z0-9_\-]/', '_', $fuelType); // Sanitizing fuel name
 			$filename = $sanitizedFuel."_vehicles.csv";
@@ -86,11 +114,5 @@
 				echo "Failed to write the CSV file: <strong>$filename</strong><br>";
 			}
 		}
-
-		// Display the number of invalid registrations
-		echo "<p style='color: red'><strong>Number of vehicles with INVALID registration number: $invalidCount</strong></p>";
-
-	} else {
-		echo "Failed to open the file.";
 	}
 ?>
